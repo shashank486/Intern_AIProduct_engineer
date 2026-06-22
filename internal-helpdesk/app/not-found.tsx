@@ -10,7 +10,7 @@ export default function NotFound() {
       </div>
       <h1 className="text-lg font-semibold text-ink">Page not found</h1>
       <p className="text-sm text-ink-faint mt-1.5 max-w-sm">
-        The ticket or page you're looking for doesn't exist or may have been moved.
+        The ticket or page you&apos;re looking for doesn&apos;t exist or may have been moved.
       </p>
       <Button asChild className="mt-5">
         <Link href="/">Back to dashboard</Link>

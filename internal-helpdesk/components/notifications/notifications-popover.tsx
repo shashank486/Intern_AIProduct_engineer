@@ -46,7 +46,7 @@ export function NotificationsPopover({ userId }: { userId: string }) {
           </div>
           <div className="max-h-80 overflow-y-auto">
             {items.length === 0 ? (
-              <p className="px-3.5 py-6 text-center text-xs text-ink-faint">You're all caught up.</p>
+              <p className="px-3.5 py-6 text-center text-xs text-ink-faint">You&apos;re all caught up.</p>
             ) : (
               items.map((n) => {
                 const Icon = ICONS[n.type];

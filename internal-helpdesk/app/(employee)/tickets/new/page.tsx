@@ -53,7 +53,7 @@ export default function NewTicketPage() {
       <div className="max-w-5xl mx-auto">
         <div className="mb-6">
           <h1 className="text-xl font-semibold text-ink tracking-tight">New ticket</h1>
-          <p className="text-sm text-ink-faint mt-0.5">Describe the issue and we'll help route it to the right team.</p>
+          <p className="text-sm text-ink-faint mt-0.5">Describe the issue and we&apos;ll help route it to the right team.</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">

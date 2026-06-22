@@ -104,7 +104,7 @@ export function AIAssistPanel({
           <span className="text-sm font-medium">AI Assist</span>
         </div>
         <p className="text-xs text-ink-faint mt-2">
-          Start describing your issue — once you've written a sentence or two, I'll suggest the department, urgency, and a clear title automatically.
+          Start describing your issue — once you&apos;ve written a sentence or two, I&apos;ll suggest the department, urgency, and a clear title automatically.
         </p>
       </div>
     );
@@ -115,10 +115,10 @@ export function AIAssistPanel({
       <div className="rounded-lg border border-border bg-card p-4">
         <div className="flex items-center gap-2 text-ink-muted mb-2">
           <Settings2 className="h-4 w-4 text-ink-faint" />
-          <span className="text-sm font-medium">AI Assist isn't configured</span>
+          <span className="text-sm font-medium">AI Assist isn&apos;t configured</span>
         </div>
         <p className="text-xs text-ink-faint">
-          Add an <code className="ticket-stamp text-[11px] bg-canvas-inset px-1 py-0.5 rounded">OPENAI_API_KEY</code> to your{" "}
+          Add a <code className="ticket-stamp text-[11px] bg-canvas-inset px-1 py-0.5 rounded">GROQ_API_KEY</code> to your{" "}
           <code className="ticket-stamp text-[11px] bg-canvas-inset px-1 py-0.5 rounded">.env.local</code> file to enable department prediction, urgency suggestions, and duplicate detection. See the README for setup.
         </p>
       </div>

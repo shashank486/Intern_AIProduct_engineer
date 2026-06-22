@@ -21,7 +21,7 @@ export default function EmployeeDashboard() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-xl font-semibold text-ink tracking-tight">Welcome back, {user.name.split(" ")[0]}</h1>
-          <p className="text-sm text-ink-faint mt-0.5">Here's what's happening with your support requests.</p>
+          <p className="text-sm text-ink-faint mt-0.5">Here&apos;s what&apos;s happening with your support requests.</p>
         </div>
         <Button asChild>
           <Link href="/tickets/new">

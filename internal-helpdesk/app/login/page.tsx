@@ -20,7 +20,7 @@ export default function LoginPage() {
       </div>
       <h1 className="text-lg font-semibold text-ink">Sign-in not yet wired up</h1>
       <p className="text-sm text-ink-faint mt-1.5 max-w-sm">
-        This prototype uses the "Preview as" switcher in the sidebar instead of real authentication.
+        This prototype uses the &quot;Preview as&quot; switcher in the sidebar instead of real authentication.
         See the README for how to wire up Clerk here.
       </p>
       <Link href="/" className="text-sm text-accent hover:underline mt-5">

@@ -20,7 +20,7 @@ export default function AllTicketsPage() {
     <AppShell>
       <div className="mb-5">
         <h1 className="text-xl font-semibold text-ink tracking-tight">All department tickets</h1>
-        <p className="text-sm text-ink-faint mt-0.5">Visibility across every department's queue</p>
+        <p className="text-sm text-ink-faint mt-0.5">Visibility across every department&apos;s queue</p>
       </div>
 
       <div className="flex flex-wrap items-center gap-2 mb-4">
