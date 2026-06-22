@@ -1,0 +1,217 @@
+// Prisma schema for the Internal Helpdesk system.
+// This mirrors lib/types/index.ts. Run `npm run db:push` to sync, then
+// `npm run db:seed` to populate sample data, and swap lib/mock/* reads for
+// Prisma queries in the API route handlers as you wire up the backend.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  EMPLOYEE
+  AGENT
+  ADMIN
+}
+
+enum DepartmentSlug {
+  IT
+  HR
+  FINANCE
+  ADMIN_DEPT
+}
+
+enum Urgency {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum HistoryType {
+  CREATED
+  ASSIGNED
+  STATUS_CHANGE
+  COMMENT_ADDED
+  PRIORITY_CHANGE
+  EDITED
+  REOPENED
+}
+
+enum NotificationType {
+  TICKET_CREATED
+  TICKET_ASSIGNED
+  STATUS_CHANGED
+  COMMENT_ADDED
+  TICKET_RESOLVED
+  MENTIONED
+}
+
+model Department {
+  id          String         @id @default(cuid())
+  slug        DepartmentSlug @unique
+  name        String
+  description String
+  color       String
+  icon        String
+  agents      User[]         @relation("DepartmentAgents")
+  tickets     Ticket[]
+  createdAt   DateTime       @default(now())
+}
+
+model User {
+  id              String             @id @default(cuid())
+  name            String
+  email           String             @unique
+  role            Role
+  department      Department?        @relation("DepartmentAgents", fields: [departmentId], references: [id])
+  departmentId    String?
+  title           String?
+  avatarUrl       String?
+  createdAt       DateTime           @default(now())
+
+  ticketsCreated  Ticket[]           @relation("TicketRequester")
+  ticketsAssigned Ticket[]           @relation("TicketAssignee")
+  comments        Comment[]
+  attachments     Attachment[]
+  notifications   Notification[]
+  historyEntries  TicketHistory[]
+  watching        TicketWatcher[]
+}
+
+model Ticket {
+  id              String          @id @default(cuid())
+  displayId       String          @unique // human-readable, e.g. TKT-2291
+  title           String
+  description     String
+  department      Department      @relation(fields: [departmentId], references: [id])
+  departmentId    String
+  urgency         Urgency
+  status          TicketStatus    @default(OPEN)
+
+  createdBy       User            @relation("TicketRequester", fields: [createdById], references: [id])
+  createdById     String
+  assignedTo      User?           @relation("TicketAssignee", fields: [assignedToId], references: [id])
+  assignedToId    String?
+
+  tags            String[]
+  isDuplicateOf   String?
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  resolvedAt      DateTime?
+  closedAt        DateTime?
+  dueAt           DateTime?
+
+  comments        Comment[]
+  attachments     Attachment[]
+  history         TicketHistory[]
+  notifications   Notification[]
+  aiSuggestion    AISuggestion?
+  watchers        TicketWatcher[]
+
+  @@index([departmentId, status])
+  @@index([createdById])
+  @@index([assignedToId])
+}
+
+model TicketWatcher {
+  id        String   @id @default(cuid())
+  ticket    Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticketId  String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  createdAt DateTime @default(now())
+
+  @@unique([ticketId, userId])
+}
+
+model Comment {
+  id          String       @id @default(cuid())
+  ticket      Ticket       @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticketId    String
+  author      User         @relation(fields: [authorId], references: [id])
+  authorId    String
+  body        String
+  isInternal  Boolean      @default(false)
+  mentions    String[]
+  attachments Attachment[]
+  createdAt   DateTime     @default(now())
+
+  @@index([ticketId])
+}
+
+model Attachment {
+  id             String   @id @default(cuid())
+  ticket         Ticket   @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticketId       String
+  comment        Comment? @relation(fields: [commentId], references: [id])
+  commentId      String?
+  fileName       String
+  fileSize       Int
+  fileType       String
+  url            String
+  isSolutionFile Boolean  @default(false)
+  uploadedBy     User     @relation(fields: [uploadedById], references: [id])
+  uploadedById   String
+  uploadedAt     DateTime @default(now())
+
+  @@index([ticketId])
+}
+
+model TicketHistory {
+  id        String      @id @default(cuid())
+  ticket    Ticket      @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticketId  String
+  type      HistoryType
+  actor     User        @relation(fields: [actorId], references: [id])
+  actorId   String
+  fromValue String?
+  toValue   String?
+  note      String?
+  createdAt DateTime    @default(now())
+
+  @@index([ticketId])
+}
+
+model AISuggestion {
+  id                    String          @id @default(cuid())
+  ticket                Ticket          @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticketId              String          @unique
+  predictedDepartment   DepartmentSlug?
+  departmentConfidence  Float?
+  suggestedUrgency      Urgency?
+  urgencyConfidence     Float?
+  generatedTitle        String?
+  duplicateOfTicketIds  String[]
+  troubleshootingSteps  String[]
+  suggestedFirstResponse String?
+  summary               String?
+  tags                  String[]
+  createdAt             DateTime        @default(now())
+}
+
+model Notification {
+  id        String            @id @default(cuid())
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  type      NotificationType
+  ticket    Ticket            @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  ticketId  String
+  message   String
+  read      Boolean           @default(false)
+  createdAt DateTime          @default(now())
+
+  @@index([userId, read])
+}
